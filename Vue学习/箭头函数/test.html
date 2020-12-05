@@ -1,0 +1,38 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test</title>
+</head>
+<body>
+
+  <div id="test">
+    <h2>当前计数值：{{counter}}</h2>
+    <button @click="increase">+</button>
+    <button @click="decrease" :disabled="counter <= 0">-</button>
+  </div>
+  
+
+  <script src="./vue.js"></script>
+  <script>
+
+    const mydata = {
+      counter: 0
+    }
+
+    const app = new Vue({
+      el: '#test',
+      data: mydata,
+      methods: {
+        increase() {
+          this.counter++
+        },
+        decrease() {
+          this.counter--
+        }
+      },
+    })
+    
+  </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test</title>
+</head>
+
+<body>
+  <div id="test">
+
+    <label for="inputUserName">
+      <p>
+        <span>请输入用户名：</span>
+        <input v-model.lazy="inputUserName" type="text" />
+      </p>
+    </label>
+
+    <label for="inputPassword">
+      <p>
+        <span>请输入密码：</span>
+        <input v-model.lazy="inputPassword" type="password" />
+      </p>
+    </label>
+
+
+    <label for="selectGender">
+      <p>
+        <span>请选择您的性别：</span>
+        <input v-model.lazy="selectGender" type="radio" value="男" /> 男
+        <input v-model.lazy="selectGender" type="radio" value="女" /> 女
+      </p>
+    </label>
+
+
+    <label for="selectName">
+      <p>
+        <span>请选择您的姓名：</span>
+        <label v-for="name in originNames" :key="name.id">
+          <input type="radio" :value="name" v-model.lazy="selectName"> {{ name }}
+        </label>
+      </p>
+    </label>
+
+    <label for="selectHobbies">
+      <p>
+        <span>请选择您的爱好：</span>
+        <label v-for="hobby in originHobbies" :key="hobby.id">
+          <input type="checkbox" :value="hobby" v-model.lazy="selectHobbies"> {{ hobby }}
+        </label>
+      </p>
+    </label>
+
+    <label for="selectFruits">
+      <p>
+        <span>请选择您喜欢吃的水果：</span>
+        <select multiple v-model.lazy="selectFruits">
+          <option v-for="fruit of originFruits" :value="fruit"> {{ fruit }} </option>
+          </selectm>
+      </p>
+    </label>
+
+    <label for="checkAgreement">
+      <p>
+        <input v-model.lazy="checkAgreement" type="checkbox" />您是否同意《胡氏三大定律》
+      </p>
+    </label>
+
+    <label for="showResult">
+      <h2>您的用户名是：{{inputUserName}}</h2>
+      <h2>您的密码是：{{inputPassword}}</h2>
+      <h2>您的性别是：{{selectGender}}</h2>
+      <h2>您的姓名是：{{selectName}}</h2>
+      <h2>您的爱好是：{{selectHobbies}}</h2>
+      <h2>您爱吃的水果是：{{selectFruits}}</h2>
+      <h2>您对《胡氏三大定律》的同意情况是：{{checkAgreement}}</h2>
+    </label>
+
+    <button :disabled="!checkAgreement">点击进入下一步</button>
+
+  </div>
+
+  <script src="../vue.js"></script>
+  <script src="./myVue.js"></script>
+</body>
+
+</html>

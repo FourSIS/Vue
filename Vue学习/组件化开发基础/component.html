@@ -1,0 +1,342 @@
+
+
+//******************最原始的写法**********************
+
+<!-- <html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test</title>
+</head>
+<body>
+  <div id="test">
+    <cpn></cpn>
+  </div>
+
+  <script src="../vue.js"></script>
+  <script>
+
+    const cpns = Vue.extend({   //extend创建构造器，构造器中包括template，components(子组件)等等
+      template: "<div><h2>这是一个全局子组件</h2></div>"
+    })
+
+    const cpn = Vue.extend({
+      template: "<div><h2>这是一个全局父组件</h2><cpns><cpns></div>",
+      components: {     
+        cpns: cpns
+      }
+    })
+
+    Vue.component("cpn",cpn)  //对构造器进行注册，如果采用了语法糖，那么构造器会以匿名函数的形式写在注册过程中
+
+    const mydata = {
+
+    }
+
+    let app = new Vue({
+      el: "#test",
+      data: mydata,
+    })
+  </script>
+</body>
+</html> -->
+
+
+//******************语法糖的注册写法，内部实际上也是产生了构造器的**********************
+
+
+<!-- <html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test</title>
+</head>
+<body>
+  <div id="test">
+    <cpn></cpn>
+  </div>
+
+  <script src="../vue.js"></script>
+  <script>
+
+    Vue.component('cpn',{     //采用语法糖写法，原本第二个参数为构造器，这里直接用匿名函数的写法进行完成
+      template: "<div><h2>这是一个全局父组件</h2><cpns><cpns></div>",
+      components: {     //需要绑定子组件，但是子组件如果也是采用语法糖的写法，那么构造器就不存在(变成了匿名函数)，这里就不能从外部调用，只能写在一起
+        //cpns: cpns   这种写法行不通，因为名为cpns的构造器并不存在，而是用匿名函数替代了
+        cpns: {
+          template: "<div><h2>这是一个全局子组件</h2></div>"
+        }
+      },
+    })
+
+
+    const mydata = {
+
+    }
+
+    let app = new Vue({
+      el: "#test",
+      data: mydata,
+    })
+  </script>
+</body>
+</html> -->
+
+
+//******************全局和局部组件的差异，全局组件可以在任何一个Vue对象中使用**********************
+<!-- <html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test</title>
+</head>
+<body>
+  <div id="test">
+    <cpn></cpn>
+  </div>
+
+  <script src="../vue.js"></script>
+  <script>
+    const mydata = {
+
+    }
+
+    let app = new Vue({
+      el: "#test",
+      data: mydata,
+      components: { //Vue对象的参数内部也是可以写components的，写在下面的组件都是这个Vue对象的子组件，出了这个Vue管辖的范围就失效了
+        cpn: { 
+          template: "<div><h2>我是一个局部父组件，我的父亲是这个Vue</h2><cpns><cpns></div>",
+          components: {
+            cpns: {   //作为子组件，单独在html中调用标签是无效的，因为html只会找到父标签和全局的组件标签，子组件标签只有他的父组件才认识
+              template: "<div><h2>我是一个局部子组件，我的父亲是上面的局部父组件</h2></div>"
+            }
+          }
+        }
+      },
+    })
+  </script>
+</body>
+</html> -->
+
+
+//******************template中的html代码很难写（没有智能提示），代码也会显得复杂，下面有两种单独书写template的方法**********************
+//******************1. 使用script标签**********************
+<!-- <html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test</title>
+</head>
+<body>
+  <div id="test">
+    <cpn></cpn>
+  </div>
+
+  <script src="../vue.js"></script>
+
+  <script type="text/x-template" id="cpn">    //可以通过script标签，属性设置为text/x-template，加上特有id的形式，在下面的template中进行调用
+    <div>
+      <h2>我是一个局部父组件，我的父亲是这个Vue</h2>
+      <cpns></cpns>
+    </div>
+  </script>
+
+  <script type="text/x-template" id="cpns">
+    <div>
+      <h2>我是一个局部子组件，我的父亲是上面的局部父组件</h2>
+    </div>
+  </script>
+
+  <script>
+    const mydata = {
+
+    }
+
+    let app = new Vue({
+      el: "#test",
+      data: mydata,
+      components: {
+        cpn: { 
+          template: "#cpn",   //直接调用script标签中的内容
+          components: {
+            cpns: {
+              template: "#cpns"
+            }
+          }
+        }
+      },
+    })
+  </script>
+</body>
+</html> -->
+
+
+//******************2. 使用template标签（推荐）**********************
+<!-- <html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test</title>
+</head>
+<body>
+  <div id="test">
+    <cpn></cpn>
+  </div>
+
+  <script src="../vue.js"></script>
+
+  <template id="cpn">   //可以将script标签的对应内容直接写成template标签
+    <div>
+      <h2>我是一个局部父组件，我的父亲是这个Vue</h2>
+      <cpns></cpns>
+    </div>
+  </template>
+
+  <template id="cpns">
+    <div>
+      <h2>我是一个局部子组件，我的父亲是上面的局部父组件</h2>
+    </div>
+  </template>
+
+  <script>
+    const mydata = {
+
+    }
+
+    let app = new Vue({
+      el: "#test",
+      data: mydata,
+      components: {
+        cpn: { 
+          template: "#cpn",   //直接调用template标签中的内容
+          components: {
+            cpns: {
+              template: "#cpns"
+            }
+          }
+        }
+      },
+    })
+  </script>
+</body>
+</html> -->
+
+
+//******************使用data**********************
+<!-- <html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test
+  </title>
+</head>
+
+<body>
+  <div id="test">
+    <cpn></cpn>
+  </div>
+
+  <template id="counterTemplate">
+    <div>
+      <h2>当前计数：{{counter}}</h2>
+      <button @click="increase">+</button>
+      <button @click="decrease" :disabled="counter===0">-</button>
+    </div>
+  </template>
+
+  
+  <script src="./vue.js"></script>
+  <script>
+
+    Vue.component('cpn', {
+      template: '#counterTemplate',
+      data() {    //组件里面的data和Vue对象里面的data的类型是不一样的，组件里面的data必须是一个函数，返回值是一个对象（返回值和Vue中的data一样）
+        return {
+          counter: 0    //这里故意做了一个函数，并且返回一个对象的目的就是让不同的组件间不影响
+        }
+      },
+      methods: {
+        increase() {
+          this.counter++
+        },
+        decrease() {
+          this.counter--
+        }
+      },
+    })
+
+    const mydata = {}
+
+    let app = new Vue({
+      el: '#test',
+      data: mydata,
+
+    })
+  
+  </script>
+</body>
+
+</html> -->
+
+
+//*****************data返回对象必须是新定义的对象，否则。。。。***********************
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test
+  </title>
+</head>
+
+<body>
+  <div id="test">
+    <cpn></cpn>
+  </div>
+
+  <template id="counterTemplate">
+    <div>
+      <h2>当前计数：{{counter}}</h2>
+      <button @click="increase">+</button>
+      <button @click="decrease" :disabled="counter===0">-</button>
+    </div>
+  </template>
+
+  
+  <script src="./vue.js"></script>
+  <script>
+
+    const countData = {
+      counter: 0
+    }
+
+    Vue.component('cpn', {
+      template: '#counterTemplate',
+      data() {
+        return countData    //这里的返回对象如果不是新定义的而是使用了上面已经定义过的对象，那么所有组件都会共用上面的对象，那么这个计数器的例子中
+                            //一旦给任意一个计数器+1，那么所有的计数器都会+1
+      },                    //所以Data用函数返回对象的目的，就是能够控制所有的组件是否共用一块数据，一般组件都是不共用的
+      methods: {
+        increase() {
+          this.counter++
+        },
+        decrease() {
+          this.counter--
+        }
+      },
+    })
+
+    const mydata = {}
+
+    let app = new Vue({
+      el: '#test',
+      data: mydata,
+
+    })
+  
+  </script>
+</body>
+
+</html>

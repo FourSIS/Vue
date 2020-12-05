@@ -1,0 +1,41 @@
+1. 在项目文件下创建src和dist
+2. 初始化npm  =>  npm init =>  一路回车  =>  产生package.json文件
+3. 通过npm下载局部webpack =>  npm install webpack@x.x.x --save-dev
+4. 创建webpack的配置文件(默认名称为webpack.config.js)
+5. 配置webpack.config.js 和 package.json两个配置文件(具体配置内容和方法不写了，估计会有很多)
+
+
+
+package.json中涉及到的内容：
+1. scripts: console中的快捷指令，配置之后会用定义的内容替换掉输入的快捷指令， 如 npm run build 就是通过配置build来的
+2. devDependencies: 运行时依赖的包或者插件，会在下载之后自动填入package.json中，如各种打包工具
+3. dependencies: 除了运行时，发布时也依赖的包，如Vue，在发布之后还要持续解析
+
+
+具体依赖包和插件：
+    包：
+      1. webpack: 将Js文件进行打包，处理各种模块化的内容
+      2. css相关： 
+            css-loader: 被webpack调用，将css文件的内容整合到webpack打包的bundle.js中，但是仅仅是整合进去，并不渲染样式
+            style-loader: 在css-loader将css整合之后，将css具体样式渲染到dom对象上，需要和css-loader配合使用
+            less-loader: 将less代码转换为css代码，但是本身不具有转化功能，需要less包进行支持，使用的时候是less-loader,css-loader,style-loader的顺序进行调用
+            less: 真实将less转换为css的工具
+            url-loader: 在css中通过url引用到的图片会被一起打包，可以通过limit来控制是使用Base64还是新建图片文件的方式进行打包
+            file-loader: 在url-loader打包图片的基础上，如果图片的大小超过limit，那么会用到file-loader来对图片进行打包
+      3. vue相关：
+            vue-loader: 将vue文件打包到bundle.js中，但是在打包过程中需要vue-template-compiler进行vue语句的解析
+            vue-template-compiler: 解析vue组件，将其转换为正常的Js代码
+            vue: vue的源码，vue-template-compiler的版本必须和vue源码的版本一致，否则无法正常解析，并且vue源码并不只是开发时依赖，实际运行的时候也是需要的
+      4. babel相关：
+            babel-loader: 将bundle.js中的ES6+的语法转换成ES低级的语法(一般是ES5)，目的是让所有浏览器都能解析，load过程中会调用core和preset-env
+            babel-core: babel的核心代码，会被loader调用
+            babel-preset-env: 转换的版本设置，一般都是转换成ES5
+
+
+    插件：
+      1. BannerPlugin: 位于自带的webpack包下面，会在打包的js文件头部添加横幅
+      2. html-webpack-plugin: 将index.html打包到dist文件夹中
+      3. uglifyjs-webpack-plugin: 将bundle.js进行压缩处理，原理是去掉换行，空格，变量用一个字母表示等等，总之...代码变丑了(这里会去掉各种注释，所以BannerPlugin配置就没什么意义了)
+      4. webpack-dev-server: 搭建本地服务，避免每次都npm run build，server可以实现动态的更新改动，如果不安装全局-g的话，就是本地的插件，所以不能通过webpack-dev-server在控制台输入，但是可以配置在package.json文件的scripts中，这样会默认在本地找
+      5. webpack-merge: 将两个js文件进行合并，然后一起export出去(可用与配置文件的合并导出)
+      
