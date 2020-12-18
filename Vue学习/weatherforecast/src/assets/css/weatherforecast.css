@@ -1,0 +1,186 @@
+@import "./base.css";
+
+#bg {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: -10;
+}
+
+#bg img {
+  width: 100%;
+  height: 100%;
+}
+
+#app {
+  height: 100%;
+  width: 100%;
+}
+
+/* 选择框样式 */
+#select {
+  padding: 5px 0 5px 10px;
+}
+
+#select input {
+  border: 1px solid #8a8a8a;
+  border-radius: 3px;
+  padding-left: 5px;
+  color: #8a8a8a;
+}
+
+#select img {
+  width: 14px;
+  height: 14px;
+  margin-left: -20px;
+}
+
+/* 天气预报主要布局 */
+#weather {
+  width: 100%;
+  height: 80%;
+}
+
+#weather-today {
+  width: 40%;
+  height: 100%;
+  float: left;
+}
+
+#weather-fature-week {
+  display: flex;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.weather-fature-day {
+  flex: 1;
+  border: solid 2px rgba(255, 255, 255, 0);
+  transition-duration: 0.5;
+  transition-property: all;
+}
+
+.hover-change {
+  border: solid 2px rgba(255, 255, 255, 0);
+  padding: 10px;
+  transition-duration: 0.5;
+  transition-property: all;
+}
+
+.hover-change:hover,
+.weather-fature-day:hover {
+  background-image: radial-gradient(rgba(0,0,0,0), rgba(255,255,255,0.5));
+  border: solid 2px rgba(255,255,255,0.7);
+  border-radius: 10px;
+}
+
+.weather-fature-day img {
+  width: 50px;
+  height: 50px;
+}
+
+#position-and-date {
+  padding: 20px 0 0 350px;
+}
+
+#temperature {
+  padding: 10px 0 0 30px;
+  border: solid 2px rgba(255, 255, 255, 0);
+}
+
+#main-temperature {
+  display: flex;
+  width: fit-content;
+}
+
+#main-temperature img {
+  height: 65px;
+  width: 65px;
+  padding: 10px 25px 0 0;
+}
+
+#temperature-number {
+  font: bold;
+  font-size: 50px;
+  padding: 15px 10px 0 0;
+}
+
+#tips {
+  padding: 10px 0 0 30px;
+  width: 80%;
+  flex-wrap: wrap;
+}
+
+.tips-content {
+  width: 100px;
+  height: 100px;
+  line-height: 30px;
+  border: 2px solid rgba(30, 255, 0, 0.4);
+  border-radius: 15px;
+  margin: 10px 10px;
+
+  text-align: center;
+  font-size: 10px;
+  color: white;
+
+  display: block;
+  background-color: rgba(136, 238, 123, 0.534);
+  transition-duration: 0.7s;
+}
+
+.tips-content:hover {
+  width: 100px;
+  height: 100px;
+  line-height: 30px;
+
+  transform: rotate(360deg);
+  border: 2px solid rgba(240, 146, 134, 0.671);
+  background-color: rgba(240, 146, 134, 0.671);
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.tips-level {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 0;
+}
+
+/* 曲线图样式 */
+#chart {
+  height: 300px;
+  width: 60%;
+
+  margin-top: 50px;
+  float: right;
+}
+
+/* 凸显图层 */
+.display-content {
+  width: 101%;
+  height: 100%;
+  background: linear-gradient(to left top, rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.3));
+}
+
+/* 字体样式 */
+.S {
+  font-size: 10px;
+  font: bold;
+}
+
+.XL {
+  font-size: 20px;
+  font: bold;
+  margin: 10px 0 0 0;
+  padding: 0;
+}
+
+.XXL {
+  font-size: 30px;
+  font: bold;
+  margin: 0 10px 0 0;
+  padding: 0;
+}

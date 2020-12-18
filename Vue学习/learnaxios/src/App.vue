@@ -128,9 +128,11 @@ request({
   url: "",
   method: "get",
   params: {
-    name: "hsj",
-    age: 18,
-    height: 1.88,
+    appid: "22266748",
+    appsecret: "pTIzTk6N",
+    version: "v1",
+    city: "武汉",
+    vue: "1",
   },
 }).then((result) => {
   console.log(result);
