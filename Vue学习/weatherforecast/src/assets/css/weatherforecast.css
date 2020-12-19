@@ -12,7 +12,17 @@
 #bg img {
   width: 100%;
   height: 100%;
+  opacity: 1;
+  animation: bgLoading 2s;
+  animation-fill-mode: forwards;
+  /* animation-iteration-count: infinite; */
 }
+
+@keyframes bgLoading {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
 
 #app {
   height: 100%;
@@ -41,6 +51,7 @@
 #weather {
   width: 100%;
   height: 80%;
+  margin-top: 15px;
 }
 
 #weather-today {
@@ -65,13 +76,17 @@
 .hover-change {
   border: solid 2px rgba(255, 255, 255, 0);
   padding: 10px;
-  transition-duration: 0.5;
-  transition-property: all;
 }
 
-.hover-change:hover,
-.weather-fature-day:hover {
+.hover-change:hover {
   background-image: radial-gradient(rgba(0,0,0,0), rgba(255,255,255,0.5));
+  border: solid 2px rgba(255,255,255,0.7);
+  border-radius: 10px;
+}
+
+.mousedown-change {
+  padding: 10px;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.15), rgba(255,255,255,0.5));
   border: solid 2px rgba(255,255,255,0.7);
   border-radius: 10px;
 }
@@ -124,20 +139,21 @@
   text-align: center;
   font-size: 10px;
   color: white;
+  text-overflow: ellipsis;
 
   display: block;
-  background-color: rgba(136, 238, 123, 0.534);
+  background-color: rgba(136, 238, 123, 0.2);
   transition-duration: 0.7s;
 }
 
 .tips-content:hover {
   width: 100px;
   height: 100px;
-  line-height: 30px;
+  line-height: 25px;
 
   transform: rotate(360deg);
-  border: 2px solid rgba(240, 146, 134, 0.671);
-  background-color: rgba(240, 146, 134, 0.671);
+  border: 2px solid rgba(240, 146, 134, 0.4);
+  background-color: rgba(240, 146, 134, 0.2);
   color: white;
   font-weight: bold;
   font-size: 15px;
@@ -150,12 +166,16 @@
 }
 
 /* 曲线图样式 */
-#chart {
+#chart-wrapper {
   height: 300px;
   width: 60%;
-
-  margin-top: 50px;
   float: right;
+}
+
+#chart {
+  height: 90%;
+  width: 100%;
+  padding-top: 10px;
 }
 
 /* 凸显图层 */

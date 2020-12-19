@@ -2,7 +2,7 @@
   <div id="app">
     <!-- 背景图片的if-else选取 -->
     <div id="bg">
-      <img :src="bgPath" alt="">
+      <img :src="bgPath" alt="" id="bg-img">
     </div>
 
     <!-- display-content用于给主要内容加上铺垫层 ———— 白色透明 -->
@@ -23,9 +23,9 @@
           <!-- 时间地点 -->
           <div id="position-and-date">
             <span class="XXL">{{ city }}</span> 
-            <span class="S" @click="showSelect = true">[切换城市]</span>
+            <span class="S hover-change" @click="showSelect = true" @mousedown="mousedown" @mouseup="mouseup">[切换城市]</span>
             <p>
-              <span >{{ date[dayIndex] }}</span>
+              <span style="margin-right: 15px">{{ date[dayIndex] }}</span>
               <span>{{ week[dayIndex] }}</span>
             </p>
           </div>
@@ -34,7 +34,7 @@
           <div id="temperature">
 
             <!-- 主要天气 -->
-            <div id="main-temperature" class="hover-change">
+            <div id="main-temperature" class="hover-change" @click="updateWeekTem()" @mousedown="mousedown" @mouseup="mouseup">
               <!-- 主要天气的图标 -->
               <img :src="iconTodayPath" alt="">
               <span id="temperature-number">{{ tem[dayIndex]+"℃" }}</span>
@@ -47,15 +47,15 @@
             <!-- 其他参数 -->
             <div>
               <p>
-                <span class=" hover-change">风向：{{ win[dayIndex] }} </span>
-                <span class=" hover-change">风速：{{ winSpeed[dayIndex] }}</span>
+                <span class=" hover-change" @mousedown="mousedown" @mouseup="mouseup">风向：{{ win[dayIndex] }} </span>
+                <span class=" hover-change" @mousedown="mousedown" @mouseup="mouseup">风速：{{ winSpeed[dayIndex] }}</span>
               </p>
               <p>
-                <span class=" hover-change" @click="updateSunriseChart()">日出时间：{{sunrise[dayIndex]}}</span>
-                <span class="hover-change" @click="updateSunsetChart()">日落时间：{{sunset[dayIndex]}}</span>
+                <span class=" hover-change" @click="updateSunriseChart()" @mousedown="mousedown" @mouseup="mouseup">日出时间：{{sunrise[dayIndex]}}</span>
+                <span class="hover-change" @click="updateSunsetChart()" @mousedown="mousedown" @mouseup="mouseup">日落时间：{{sunset[dayIndex]}}</span>
               </p>
               <p>
-                <span class="hover-change">空气质量：{{air_level[dayIndex ]}}</span>
+                <span class="hover-change" @click="updateAirChart()" @mousedown="mousedown" @mouseup="mouseup">空气质量：{{air_level[dayIndex ]}}</span>
               </p>
             </div>
 
@@ -79,7 +79,7 @@
 
         <!-- 未来天气：图标和信息 -->
         <div id="weather-fature-week">
-          <div v-for="(item, index) in date" :key="item.id" class="weather-fature-day" @click="changeDayAndUpdateChart(index)" >
+          <div v-for="(item, index) in date" :key="item.id" class="weather-fature-day hover-change" @click="changeDayAndUpdateChart(index)" @mousedown="mousedown" @mouseup="mouseup">
             <div>
               <p>{{ week[index] }}</p>
               <p>{{ date[index] }}</p>
@@ -92,7 +92,8 @@
         </div>
 
         <!-- 折线图 -->
-        <div id="chart"></div>
+        <div id="chart-wrapper"><div id="chart"></div></div>
+        
       </div>
     </div>
   </div>
@@ -130,8 +131,6 @@ export default {
       tipsIndex: 10,        // 小贴士onmouseover配合使用，动态显示小贴士
       tips: [],             // 小贴士内容
       
-
-
       // 画图所需参数
       option: {},           // 画图所需参数
 
@@ -147,6 +146,8 @@ export default {
       this.selectStateChange()    // 关闭搜索框
       this.cityChange()           // 改变城市参数
       this.getWeatherInfoAndDrawChart() // 获取数据并画图
+
+      document.getElementById("bg-img").style.animationPlayState = "running";
     },
 
     getWeatherInfoAndDrawChart() {
@@ -182,7 +183,7 @@ export default {
           this.$set(this.hoursTem,i,res.data[i].hours)                          // 每小时气温  
         }
         this.isDay = res.update_time.slice(-8, -6) >= 18 ? false : true; // 判定是否为白天，决定背景图片
-        this.drawChart(this.week,this.tem)
+        this.updateWeekTem()    // 默认显示未来七天天气变化图
       })
     },
 
@@ -202,6 +203,16 @@ export default {
       this.tipsIndex = 10;
     },
 
+    mousedown(event) {
+      let newClassName = event.currentTarget.className.replace('hover-change','mousedown-change')   // 用mousedown的class替换掉hover的class带来的样式效果
+      event.currentTarget.className = newClassName
+    },
+
+    mouseup(event) {
+      let newClassName = event.currentTarget.className.replace('mousedown-change','hover-change')   // 效果和mousedown相反
+      event.currentTarget.className = newClassName
+    },
+
     changeDayAndUpdateChart(index) {
       this.changeDayIndex(index)
 
@@ -213,32 +224,45 @@ export default {
         return currentValue.tem
       })
 
-      this.drawChart(hours,temperature)
+      this.drawChart(hours,temperature,'{value}℃',"小时气温变化图 ———— "+this.week[this.dayIndex])
+
+       document.getElementById("bg-img").style.animationPlayState = "running";
+
     },
 
     updateSunriseChart() {
-      this.drawChart(this.week,this.sunrise)
+      let hour = this.sunrise.map( data =>  data.substr(0,2) )
+      let min = this.sunrise.map( data => data.substr(3,2) )
+      this.drawChart(this.week,min,(value,index) => {
+        if(value < 10) 
+          return  hour[index]+":0"+value
+        return hour[index]+":"+value
+      },"未来七天日出时间趋势图")
     },
 
     updateSunsetChart () {
-      this.drawChart(this.week,this.sunset)
+      let hour = this.sunset.map( data =>  data.substr(0,2) )
+      let min = this.sunset.map( data => data.substr(3,2) )
+      this.drawChart(this.week,min,(value,index) => {
+        if(value < 10) 
+          return  hour[index]+":0"+value
+        return hour[index]+":"+value
+      },"未来七天日落时间趋势图")
+    },
+    
+    updateAirChart() {
+      this.drawChart(this.week,this.air,'{value}',"未来七天空气污染指数趋势图")
+    },
+
+    updateWeekTem() {
+      this.drawChart(this.week,this.tem,'{value}℃',"未来七天气温变化趋势图")
     },
 
     changeDayIndex(index) {   // 改变主要显示天气
       this.dayIndex = index;
     },
 
-    // createClickFeeling(event) {
-    //   event.target.style.backgroundImage = "radial-gradient(rgba(0,0,0,0), rgba(255,255,255,0.5))";
-    //   event.target.style.border = "solid 2px rgba(255,255,255,0.7)";
-    //   event.target.style.borderRadius = "10px";
-    // },
-
-    drawChart(paramX, paramY) {             // 绘制图表
-      console.log("paramX",paramX);
-      console.log("paramY",paramY);
-      
-
+    drawChart(paramX, paramY,formatter,title) {             // 绘制图表
         let test = this.chartTem = this.tem.map(curValue => {
           return curValue.slice(0, -1);
         });
@@ -251,10 +275,19 @@ export default {
 
           // 设置相对于父元素的位置
           grid: {
-            top: 10,
-            bottom: 40,
-            left: 30,
+            bottom: 20,
+            left: 50,
             right: 30,
+          },
+
+          // 标题
+          title: {
+            text: title,
+            left: "center",
+            top: 10,
+            textStyle: {
+              color: "rgba(255,255,255,1)"
+            }
           },
 
           // x轴相应参数
@@ -280,6 +313,8 @@ export default {
             {
               type: "value",
               show: true,
+              scale: true,    // 自适应
+              minInterval: 1, // 只显示整数
               axisPointer: {
                 show: true,
               },
@@ -288,6 +323,7 @@ export default {
               },
               axisLabel: {
                 color: "rgba(255,255,255,1)",
+                formatter: formatter  // 格式化操作，可以是字符串也可以是函数
               },
             },
           ],
@@ -331,6 +367,12 @@ export default {
   mounted() {     // dom挂载完毕后，可以通过getElementById找到对应的dom元素，将对应的元素绑定到echarts上
     myChart = echarts.init(document.getElementById("chart")); // 绑定chart元素并生成实例
     this.updateCity(); // 获取接口数据
+
+    // document.getElementById("bg-img").addEventListener("webkitAnimationStart", () => {    // 背景监听动画结束，为了切换图片时候能够再次触发动画
+    //   setTimeout(() => {
+    //     document.getElementById("bg-img").style.animationPlayState = "paused";
+    //   },2000)
+    // });
   },
 };
 </script>
