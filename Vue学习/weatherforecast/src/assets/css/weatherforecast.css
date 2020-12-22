@@ -1,5 +1,26 @@
 @import "./base.css";
 
+@keyframes bgLoading {
+  0% {opacity: 0.8;}
+  100% {opacity: 1;}
+}
+
+@keyframes keep {
+  0% {opacity: 1}
+  100% {opacity: 1}
+}
+
+@keyframes audio-show {
+  from { width: 0; }
+  to { width: 85%; }
+}
+
+@keyframes audio-none {
+  from { width: 85%; }
+  to { width: 0; }
+}
+
+
 #bg {
   position: fixed;
   top: 0;
@@ -9,20 +30,12 @@
   z-index: -10;
 }
 
-#bg img {
+#bg-img {
   width: 100%;
   height: 100%;
   opacity: 1;
-  animation: bgLoading 2s;
-  animation-fill-mode: forwards;
-  /* animation-iteration-count: infinite; */
+  animation: bgLoading 1s forwards;
 }
-
-@keyframes bgLoading {
-  0% {opacity: 0;}
-  100% {opacity: 1;}
-}
-
 
 #app {
   height: 100%;
@@ -31,7 +44,7 @@
 
 /* 选择框样式 */
 #select {
-  padding: 5px 0 5px 10px;
+  padding: 15px 0 5px 50px;
 }
 
 #select input {
@@ -51,22 +64,46 @@
 #weather {
   width: 100%;
   height: 80%;
-  margin-top: 15px;
 }
 
 #weather-today {
   width: 40%;
   height: 100%;
   float: left;
+  margin-top: 20px;
 }
 
-#weather-fature-week {
+#music {
+  display: flex;
+  height: 54px;
+  width: 70%;
+  margin-top: 15px;
+}
+
+#music-audio {
+  width: 0;
+}
+
+#music img {
+  height: 54px;
+  width: 54px;
+}
+
+#broadcast-title {
+  text-align: center;
+}
+
+#weather-future-week {
   display: flex;
   text-align: center;
-  margin-top: 10px;
+  margin: 0;
 }
 
-.weather-fature-day {
+#weather-future-week p {
+  margin: 20px 0 20px 0;
+}
+
+.weather-future-day {
   flex: 1;
   border: solid 2px rgba(255, 255, 255, 0);
   transition-duration: 0.5;
@@ -91,17 +128,22 @@
   border-radius: 10px;
 }
 
-.weather-fature-day img {
+.weather-future-day img {
   width: 50px;
   height: 50px;
 }
 
 #position-and-date {
-  padding: 20px 0 0 350px;
+  padding: 0 0 0 48px;
+}
+
+#position-and-date p {
+  margin-bottom: 0;
+  color: rgba(255,255,255,.6);
 }
 
 #temperature {
-  padding: 10px 0 0 30px;
+  padding: 0 0 0 30px;
   border: solid 2px rgba(255, 255, 255, 0);
 }
 
@@ -119,7 +161,7 @@
 #temperature-number {
   font: bold;
   font-size: 50px;
-  padding: 15px 10px 0 0;
+  padding: 15px 15px 0 0;
 }
 
 #tips {
@@ -128,11 +170,18 @@
   flex-wrap: wrap;
 }
 
+.tips-title {
+  color: rgba(255,255,255,.6);
+  font-size: 15px;
+  font-weight: bold;
+  margin: 7px 0 7px 0;
+}
+
 .tips-content {
   width: 100px;
   height: 100px;
   line-height: 30px;
-  border: 2px solid rgba(30, 255, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.5);
   border-radius: 15px;
   margin: 10px 10px;
 
@@ -142,19 +191,17 @@
   text-overflow: ellipsis;
 
   display: block;
-  background-color: rgba(136, 238, 123, 0.2);
-  transition-duration: 0.7s;
+  background: radial-gradient(rgba(0,0,0,0), rgba(255,255,255,0.5));
+  transition-duration: 0.4s;
+}
+
+.tips-content p {
+  margin: 0 0 10px 0;
 }
 
 .tips-content:hover {
-  width: 100px;
-  height: 100px;
   line-height: 25px;
-
   transform: rotate(360deg);
-  border: 2px solid rgba(240, 146, 134, 0.4);
-  background-color: rgba(240, 146, 134, 0.2);
-  color: white;
   font-weight: bold;
   font-size: 15px;
 }
@@ -199,8 +246,12 @@
 }
 
 .XXL {
-  font-size: 30px;
-  font: bold;
+  font-size: 35px;
+  font-weight: bold;
   margin: 0 10px 0 0;
   padding: 0;
+}
+
+.light {
+  color: rgba(255,255,255,.6)
 }
