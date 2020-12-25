@@ -4,7 +4,7 @@
       <div slot="center">购物街</div>
     </nav-bar>
 
-    <scroll class="content">
+    <scroll class="content" ref="scroll" :probe-type="0">
       <swiper :banners="banners"></swiper>
       <recommend :recommends="recommends" />
       <feature />
@@ -12,7 +12,7 @@
       <goods-list :goods="showGoods" />
     </scroll>
 
-    <back-top />
+    <back-top @click.native="backClick" />
   </div>
 </template>
 
@@ -77,7 +77,7 @@ export default {
     /*
      **  事件监听有关代码
      */
-    tabClick(index) {
+    tabClick(index) {   // tabbarControll 点击事件，修改currentType
       switch (index) {
         case 0:
           this.currentType = "pop";
@@ -92,6 +92,16 @@ export default {
           break;
       }
     },
+
+    backClick() {
+      // 这里是直接对组件进行原生事件监听，例如点击事件需要使用@click.native
+      // 使用了.native相当于"在组件内部进行@click监听，然后$emit返回，然后在父组件进行监听emit"
+      console.log("backtop点击事件被触发");    
+      // console.log(this.$refs.scroll.message);   // 通过this.refs.AAA.bb 可以获取AAA组件中的bb数据
+      // this.$refs.scroll.scroll.scrollTo(0,0,500)    // 通过调用scroll组件内部  绑定在content上的的scroll对象  的scrollTo(x,y,time)方法进行跳转
+      this.$refs.scroll.scrollTo(0,0)   // 这里调用的是组件内部进行过封装的scrollTo方法，time属性进行过默认值的设置，如果不传time,就是500ms
+    
+    }
   },
   computed: {
     showGoods() {

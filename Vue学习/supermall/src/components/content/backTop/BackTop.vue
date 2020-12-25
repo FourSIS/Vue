@@ -12,7 +12,8 @@ export default {
 
 <style>
 .back-top {
-  position: fixed;
+  /* fixed 定位，可以让图片保持在右下角的位置 */
+  position: fixed;   
   right: 8px;
   bottom: 55px;
 }
