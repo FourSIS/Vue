@@ -1,13 +1,11 @@
 <template>
-  <div class="goods-item">
-    <a :href="goodsItem.link">
-      <img :src="goodsItem.show.img" alt="" />
-      <div class="goods-info">
-        <p>{{ goodsItem.title }}</p>
-        <span class="price">{{ goodsItem.price }} </span>
-        <span class="collect">{{ goodsItem.cfav }}</span>
-      </div>
-    </a>
+  <div class="goods-item" @click="itemClick">
+    <img v-lazy="showImage" alt="" @load="imgLoad"/>
+    <div class="goods-info">
+      <p>{{ goodsItem.title }}</p>
+      <span class="price">{{ goodsItem.price }} </span>
+      <span class="collect">{{ goodsItem.cfav }}</span>
+    </div>
   </div>
 </template>
 
@@ -21,10 +19,30 @@ export default {
       },
     },
   },
+
+  computed: {
+    showImage() {
+      return this.goodsItem.image || this.goodsItem.show.img
+    }
+  },
+
+  methods: {
+    imgLoad() {   // 手动通过事件总线，解决scrollHeight的refresh问题，在bs4中直接通过observeDOM: true配置即可
+      this.$bus.$emit("imageLoad")
+    },
+    itemClick() {
+      this.$router.push({
+        path: "/details",
+        query: {
+          iid: this.goodsItem.iid
+        }
+      })
+    }
+  },
 };
 </script>
 
-<style>
+<style scoped>
 .goods-item {
   padding-bottom: 40px;
   position: relative;

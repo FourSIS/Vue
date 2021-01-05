@@ -44,13 +44,12 @@ export default {
   height: 40px;
   line-height: 40px;
   font-size: 15px;
-
-  /* 吸顶效果可以用position: sticky实现 */
-  position: sticky;
-  top: 44px;
   background-color: #fff;
 
-  z-index: 9;
+  /* 吸顶效果可以用position: sticky实现 */
+  /* position: sticky; */
+  /* top: 44px; */
+  /* z-index: 9; */
 }
 
 .tab-control-item {

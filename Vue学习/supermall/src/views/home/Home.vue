@@ -3,16 +3,16 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
-
-    <scroll class="content" ref="scroll" :probe-type="0">
-      <swiper :banners="banners"></swiper>
+    <tab-control :titles="['流行', '新款', '精选']" @tabClick="tabClick" v-show="isFixTabControl" class="tab-control" ref="tabControl1" />
+    <scroll class="content" ref="scroll" :probe-type="3" :pull-up-load="true" @scroll="contentScroll" @touchEnd="loadMore">
+      <swiper :banners="banners" @swiperImageLoad="swiperImageLoad" />
       <recommend :recommends="recommends" />
       <feature />
-      <tab-control :titles="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+      <tab-control :titles="['流行', '新款', '精选']" @tabClick="tabClick" ref="tabControl2" />
       <goods-list :goods="showGoods" />
     </scroll>
 
-    <back-top @click.native="backClick" />
+    <back-top @click.native="backClick" v-show="isShowBackTop" />
   </div>
 </template>
 
@@ -21,13 +21,15 @@ import NavBar from "components/common/navbar/NavBar";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goods/GoodsList";
 import Scroll from "components/content/scroll/Scroll";
-import BackTop from "components/content/backTop/BackTop";
 
 import Swiper from "views/home/childComps/HomeSwiper";
 import Recommend from "views/home/childComps/RecommendView";
 import Feature from "views/home/childComps/FeatureView";
 
 import { getHomeMultiData, getHomeGoods } from "network/home";
+
+import { debounce } from "common/utils"
+import {imageListenerMixin,backTopMixin} from "common/mixin"
 
 export default {
   name: "Home",
@@ -41,6 +43,11 @@ export default {
         sell: { curPage: 0, list: [] },
       },
       currentType: "pop",
+
+      saveY: 0,
+
+      offsetTopTabControll: 0,
+      isFixTabControl: false,
     };
   },
   components: {
@@ -48,7 +55,6 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
-    BackTop,
 
     Swiper,
     Recommend,
@@ -68,7 +74,6 @@ export default {
     getHomeGoods(type) {
       const page = this.goods[type].curPage + 1; // 拿到当前页码之后，我们要请求的应该是下一页的内容，需要+1
       getHomeGoods(type, page).then((res) => {
-        console.log(res);
         this.goods[type].list.push(...res.data.list); // 将一个数组“塞”到另外一个数组中，用push，并且用...对数组进行解构，一个一个塞进去
         this.goods[type].curPage += 1; // 最后将当前页码+1
       });
@@ -91,16 +96,21 @@ export default {
           this.currentType = "sell";
           break;
       }
+      this.$refs.tabControl1.currentIndex = index;    // 让两个tabControl的所选分区保持一致
+      this.$refs.tabControl2.currentIndex = index;
     },
 
-    backClick() {
-      // 这里是直接对组件进行原生事件监听，例如点击事件需要使用@click.native
-      // 使用了.native相当于"在组件内部进行@click监听，然后$emit返回，然后在父组件进行监听emit"
-      console.log("backtop点击事件被触发");    
-      // console.log(this.$refs.scroll.message);   // 通过this.refs.AAA.bb 可以获取AAA组件中的bb数据
-      // this.$refs.scroll.scroll.scrollTo(0,0,500)    // 通过调用scroll组件内部  绑定在content上的的scroll对象  的scrollTo(x,y,time)方法进行跳转
-      this.$refs.scroll.scrollTo(0,0)   // 这里调用的是组件内部进行过封装的scrollTo方法，time属性进行过默认值的设置，如果不传time,就是500ms
-    
+    contentScroll( position ) {
+      this.isShowBackTop = (-position.y) > 1000
+      this.isFixTabControl = (-position.y) > this.offsetTopTabControll
+    },
+
+    loadMore() {
+      this.getHomeGoods(this.currentType)
+    },
+
+    swiperImageLoad() {
+      this.offsetTopTabControll = this.$refs.tabControl2.$el.offsetTop
     }
   },
   computed: {
@@ -117,6 +127,24 @@ export default {
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
   },
+
+  mixins: [imageListenerMixin,backTopMixin],
+
+  mounted() {
+  },
+
+  activated() {
+    this.$refs.scroll.refresh()
+    this.$refs.scroll.scrollTo(0,this.saveY,0)  // 切换回来的时候直接调整到对应的位置，time参数设置为0    
+  },
+
+  deactivated() {
+    // 1.保存当前Y值
+    this.saveY = this.$refs.scroll.getScrollY()
+
+    // 2.把事件总线监听的事务取消掉
+    this.$bus.$off(this.imageListener)
+  },
 };
 </script>
 
@@ -131,10 +159,15 @@ export default {
   background-color: var(--color-tint);
   color: #fff;
 
-  position: fixed;
+  /* position: fixed;   使用原生滚动的话，需要保持fixed，但是bs就不用了
   left: 0;
   right: 0;
   top: 0;
+  z-index: 9; */
+}
+
+.tab-control {
+  position: relative;
   z-index: 9;
 }
 

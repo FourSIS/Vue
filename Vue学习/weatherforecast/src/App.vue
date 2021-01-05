@@ -62,7 +62,7 @@
           </div>
 
           <!-- 小贴士 -->
-          <div v-for="(items, index) in tips" :key="items.id" :style="{display: dayIndex === index ? 'flex' : 'none'}"  id="tips" >
+          <div v-for="(items, index) in tips" :key="items.id" v-show="dayIndex === index" id="tips" >
             <div v-for="(item, index) in items" :key="item.id" class="tips-content" @mouseover="tipsHover(index)" @mouseout="tipsOut">
               <span v-if="index === tipsIndex">{{ item.desc}}</span>
               <div v-else>

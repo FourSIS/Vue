@@ -149,7 +149,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /* 
 使用原生css实现局部滚动，首先必须有确定的高度，其次需要将y轴设置成滚动，那么overflow的部分会自动hidden
 .content {
